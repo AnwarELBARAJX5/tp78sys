@@ -72,7 +72,21 @@ int sgf_getc(OFILE* file) {
  ************************************************************/
 
 int sgf_seek(OFILE* file, int pos) {
-    return sgf_seek_impl(file, pos);
+    if (file->mode != READ_MODE) {
+        return -1;
+    }
+    if (pos < 0 || pos >= file->inode.size) {
+        return -1;
+    }
+    int old_block = file->ptr / BLOCK_SIZE;
+    int new_block = pos / BLOCK_SIZE;
+    if (pos % BLOCK_SIZE != 0) {
+        if (old_block != new_block) {
+            sgf_read_block(file, new_block);
+        }
+    }
+    file->ptr = pos;
+    return 0;
 }
 
 
@@ -146,7 +160,6 @@ void sgf_putc(OFILE* file, char  c) {
 
 void sgf_puts(OFILE* file, char* s) {
     assert (file->mode == WRITE_MODE);
-    
     for (; (*s != '\0'); s++) {
         sgf_putc(file, *s);
     }
