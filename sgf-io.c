@@ -256,5 +256,13 @@ OFILE*  sgf_open(const char* name, MODE mode) {
  ************************************************************/
 
 void sgf_close(OFILE* file) {
-    sgf_close_impl(file);
+    if (file->mode == WRITE_MODE) {
+        file->inode.size = file->ptr;
+        if (file->ptr % BLOCK_SIZE != 0) {
+            sgf_append_block(file);
+        } else {
+            write_inode(file->adr_inode, file->inode);
+        }
+    }
+    free(file);
 }
