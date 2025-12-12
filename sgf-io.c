@@ -133,6 +133,11 @@ void sgf_read_block(OFILE* file, int block_number) {
  ************************************************************/
 
 void sgf_append_block(OFILE* file) {
+    if (file->mode == APPEND_MODE) {
+        write_block(file->inode.last, (BLOCK*)file->buffer);
+        file->mode = WRITE_MODE;
+        return;
+    }
    int new_block=alloc_block();
    write_block(new_block, (BLOCK*)file->buffer);
    set_fat(new_block,FAT_EOF);
