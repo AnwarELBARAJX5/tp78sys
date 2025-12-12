@@ -114,7 +114,11 @@ typedef struct {                /* bloc répertoire                  */
     int       signature;        /* signature du système de fichier  */
     DIR_ENTRY files[DIR_SIZE];  /* tableau des couples              */
 } DIRECTORY;
-
+typedef enum {
+    READ_MODE,         /* Fichier ouvert en lecture         */
+    WRITE_MODE,        /* Fichier ouvert en écriture        */
+    APPEND_MODE,       /* Fichier en mode ajout             */
+} MODE;
 
 /* lecture/écriture du répertoire */
 void read_dir_block (DIRECTORY* b);
