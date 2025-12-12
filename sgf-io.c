@@ -91,7 +91,11 @@ int sgf_seek(OFILE* file, int pos) {
  ************************************************************/
 
 void sgf_read_block(OFILE* file, int block_number) {
-    sgf_read_block_impl(file, block_number);
+    int adr = file->inode.first;
+    for (int i = 0; i < block_number; i++) {
+        adr=get_fat(adr);
+    }
+    read_block(adr,(BLOCK*)file->buffer);
 }
 
 
