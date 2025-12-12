@@ -239,6 +239,10 @@ OFILE*  sgf_open(const char* name, MODE mode) {
             int oldinode = add_inode(name, adr_inode);
             if (oldinode > 0) sgf_remove(oldinode);
             break;
+         case APPEND_MODE:
+            adr_inode = find_inode(name);
+            if (adr_inode < 0) return NULL;
+            break;
         default:
             return NULL;
     }
@@ -250,7 +254,12 @@ OFILE*  sgf_open(const char* name, MODE mode) {
     file->adr_inode = adr_inode;
     file->mode      = mode;
     file->ptr       = 0;
-    
+    if (mode == APPEND_MODE) {
+       file->ptr = inode.size;
+        if (inode.size % BLOCK_SIZE != 0) {
+             sgf_read_block(file, inode.size / BLOCK_SIZE);
+            }
+        }
     return (file);
 }
 
