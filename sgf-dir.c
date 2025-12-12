@@ -126,7 +126,12 @@ void create_empty_directory () {
  ************************************************************/
 
 void list_directory (void) {    
-    list_directory_impl();
+    for(int j=0 ;j<DIR_SIZE;j++){
+    if(directory.files[j].adr_inode>0){
+    INODE inode=read_inode(directory.files[j].adr_inode);
+    printf("nom de fichier : %s  \n taille de fichier : %d \n",directory.files[j].name,inode.size);
+    }
+   }
 }
 
 
