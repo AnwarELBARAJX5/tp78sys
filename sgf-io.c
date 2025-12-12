@@ -186,7 +186,16 @@ void sgf_puts(OFILE* file, char* s) {
  ************************************************************/
 
 void sgf_remove(int  adr_inode) {
-    sgf_remove_impl(adr_inode);
+   INODE inode=read_inode(adr_inode);
+   set_fat(adr_inode, FAT_FREE);
+   int actuel = inode.first;
+   int suivant;
+   while(actuel!=FAT_EOF && actuel>0){
+   suivant=get_fat(actuel);
+   set_fat(actuel,FAT_FREE);
+   actuel=suivant;
+   }
+   printf("Fichier supprimé (inode %d).\n", adr_inode);
 }
 
 
