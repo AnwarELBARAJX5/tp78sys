@@ -41,9 +41,16 @@ void init_sgf(void) {
  ************************************************************/
 
 int sgf_getc(OFILE* file) {
-    return sgf_getc_impl(file);
+    if (file->ptr >= file->inode.size) {
+        return -1;
+    }
+    if (file->ptr % BLOCK_SIZE == 0) {
+       sgf_read_block(file,file->ptr/BLOCK_SIZE);
+    }
+    int character=file->buffer[file->ptr%BLOCK_SIZE];
+    file->ptr++;
+    return character;
 }
-
 
 /************************************************************
  Déplacer le pointeur associé au fichier ouvert en lecture
