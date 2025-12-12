@@ -136,6 +136,7 @@ void sgf_append_block(OFILE* file) {
     if (file->mode == APPEND_MODE) {
         write_block(file->inode.last, (BLOCK*)file->buffer);
         file->mode = WRITE_MODE;
+        write_inode(file->adr_inode, file->inode);
         return;
     }
    int new_block=alloc_block();
@@ -263,6 +264,8 @@ OFILE*  sgf_open(const char* name, MODE mode) {
        file->ptr = inode.size;
         if (inode.size % BLOCK_SIZE != 0) {
              sgf_read_block(file, inode.size / BLOCK_SIZE);
+            }else{
+            file->mode=WRITE_MODE;
             }
         }
     return (file);
@@ -279,7 +282,7 @@ OFILE*  sgf_open(const char* name, MODE mode) {
  ************************************************************/
 
 void sgf_close(OFILE* file) {
-    if (file->mode == WRITE_MODE) {
+    if (file->mode == WRITE_MODE || file->mode == APPEND_MODE) {
         file->inode.size = file->ptr;
         if (file->ptr % BLOCK_SIZE != 0) {
             sgf_append_block(file);

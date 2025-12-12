@@ -10,6 +10,7 @@
 
 void sgf_remove(int adr_inode);
 int main() {
+/* Ancien main
     init_sgf();
     
     printf("\nLISTE DES FICHIERS\n\n");
@@ -40,5 +41,25 @@ int main() {
     delete_inode("essai.txt");
     printf("Verification apres suppression :\n");
     list_directory();
+    */
+    init_sgf();
+    printf("\nTEST MODE AJOUT (APPEND)\n");
+    printf("Reinitialisation de 'test.txt'...\n");
+    OFILE* file = sgf_open("test.txt", WRITE_MODE);
+    if (file != NULL) {
+        sgf_close(file);
+    } else {
+        printf("Erreur impossible de créer le fichier.\n");
+        return EXIT_FAILURE;
+    }
+    printf("Ajout de 300 caracteres\n");
+    for (int i = 0; i < 300; i++) {
+        file = sgf_open("test.txt", APPEND_MODE);
+        sgf_putc(file, 'X');
+        sgf_close(file);
+    }
+    printf("\nVerification de la taille ==300 ??\n");
+    list_directory();
+
     return (EXIT_SUCCESS);
 }
